@@ -97,11 +97,30 @@ plot(allEffects(hyp.out))
 ## ───────────────────────────────────
 
 ##   Use the NH11 data set that we loaded earlier.
+library(effects)
+NH11wrk2 <- readRDS("dataSets/NatHealth2011.rds")
+NH11wrk2 <- data.frame(c(NH11wrk["age_p"], NH11wrk["r_maritl"], NH11wrk["everwrk"]))
+NH11wrk2 <- na.omit(NH11wrk2)
+
+NH11wrk2$everwrk <- factor(NH11wrk2$everwrk, c("1 Yes", "2 No"))
 
 ##   1. Use glm to conduct a logistic regression to predict ever worked
 ##      (everwrk) using age (age_p) and marital status (r_maritl).
 ##   2. Predict the probability of working for each level of marital
 ##      status.
+
+wrkd.out <- glm(everwrk~age_p+r_maritl,
+               data=NH11wrk2, family="binomial")
+
+wrkdPrediction <- predict(wrkd.out, type = "response",
+                          se.fit = TRUE, interval="confidence",
+                          newdata = NH11wrk2)
+
+wrkd.out.tab <- coef(summary(wrkd.out))
+wrkd.out.tab[ , "Estimate"] <- exp(coef(wrkd.out))
+plot(allEffects(wrkd.out))
+
+
 
 ##   Note that the data is not perfectly clean and ready to be modeled. You
 ##   will need to clean up at least some of the variables before fitting
