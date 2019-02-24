@@ -4,7 +4,8 @@
 
 # Exercise 0: Install these packages if you don't have them already
 
-# install.packages(c("cluster", "rattle.data","NbClust"))
+install.packages(c("cluster", "rattle.data","NbClust"))
+
 
 # Now load the data and look at the first few rows
 data(wine, package="rattle.data")
@@ -12,6 +13,8 @@ head(wine)
 
 # Exercise 1: Remove the first column from the data and scale
 # it using the scale() function
+
+df <- scale(wine[-1])
 
 
 # Now we'd like to cluster the data using K-Means. 
@@ -39,6 +42,8 @@ wssplot(df)
 #   * Why does this method work? What's the intuition behind it?
 #   * Look at the code for wssplot() and figure out how it works
 
+# 3 clusters - the change in sum of squares within groups is most significant up to 3, after which the changes become smaller
+
 # Method 2: Use the NbClust library, which runs many experiments
 # and gives a distribution of potential number of clusters.
 
@@ -51,19 +56,21 @@ barplot(table(nc$Best.n[1,]),
 
 
 # Exercise 3: How many clusters does this method suggest?
-
+# 2 clusters
 
 # Exercise 4: Once you've picked the number of clusters, run k-means 
 # using this number of clusters. Output the result of calling kmeans()
 # into a variable fit.km
 
-# fit.km <- kmeans( ... )
+fit.km <- kmeans(df, 3)
 
 # Now we want to evaluate how well this clustering does.
 
 # Exercise 5: using the table() function, show how the clusters in fit.km$clusters
 # compares to the actual wine types in wine$Type. Would you consider this a good
 # clustering?
+table(fit.km$cluster, wine$Type)
+#Yes, is seems to be a good clustering
 
 
 # Exercise 6:
@@ -71,3 +78,6 @@ barplot(table(nc$Best.n[1,]),
 # * Would you consider this a good clustering?
 
 #clusplot( ... )
+library("cluster")
+clusplot(df, fit.km$cluster)
+#Yes, this looks like good clustering
